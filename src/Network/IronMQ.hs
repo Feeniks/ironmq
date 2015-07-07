@@ -1,12 +1,7 @@
 {-# LANGUAGE OverloadedStrings, DeriveDataTypeable #-}
 
 module Network.IronMQ(
-	Network.IronMQ.Types.Host,
-	Network.IronMQ.Types.ProjectID,
-	Network.IronMQ.Types.Token,
-	Network.IronMQ.Types.QueueClient,
-	Network.IronMQ.Types.Message,
-	Network.IronMQ.Types.QueueMessage(..),
+	module Network.IronMQ.Types, 
 	createClient,
 	queueInfo,
 	queueClear,
