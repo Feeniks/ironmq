@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, DeriveDataTypeable #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Network.IronMQ(
 	module Network.IronMQ.Types, 
@@ -22,23 +22,10 @@ import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as LB
 import Data.Char (toLower)
 import qualified Data.Text as T
-import Data.Typeable
 import Network.HTTP.Client (HttpException(..))
 import qualified Network.HTTP.Types.Status as NS
 import Network.Wreq
 import qualified Network.Wreq.Session as S
-
-data QueueException = 
-	BadRequest 
-	| Unauthorized 
-	| QuotaExceeded 
-	| NotFound 
-	| ServiceUnavailable 
-	| MessageParseError String 
-	| Misc String 
-	deriving (Show, Typeable)
-
-instance Exception QueueException
 
 throwHTTP :: HttpException -> IO a
 throwHTTP (StatusCodeException stat headers cookies)

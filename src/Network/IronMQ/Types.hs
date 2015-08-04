@@ -1,8 +1,9 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, DeriveDataTypeable #-}
 
 module Network.IronMQ.Types where 
 
 import Control.Lens.TH
+import Data.Typeable
 import qualified Network.Wreq.Session as S
 
 class Message a where 
@@ -45,3 +46,12 @@ makeLenses ''PushResponse
 makeLenses ''QueueMessage
 makeLenses ''QueueMessages
 
+data QueueException = 
+	BadRequest 
+	| Unauthorized 
+	| QuotaExceeded 
+	| NotFound 
+	| ServiceUnavailable 
+	| MessageParseError String 
+	| Misc String 
+	deriving (Show, Typeable)

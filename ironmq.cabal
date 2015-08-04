@@ -1,5 +1,5 @@
 name:                ironmq
-version:             0.1.0
+version:             0.1.1
 synopsis:            IronMQ client
 description:         A simple Haskell IronMQ client
 homepage:            http://github.com/Feeniks/ironmq

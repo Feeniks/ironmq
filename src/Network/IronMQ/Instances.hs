@@ -5,6 +5,7 @@ module Network.IronMQ.Instances where
 import Network.IronMQ.Types
 
 import Control.Applicative
+import Control.Exception (Exception)
 import Control.Lens hiding ((.=))
 import Control.Monad
 import Data.Aeson
@@ -42,3 +43,5 @@ instance Message b => FromJSON (QueueMessages b) where
 
 instance Message b => ToJSON (QueueMessages b) where 
 	toJSON qms = object ["messages" .= (qms ^. msMessages)]
+	
+instance Exception QueueException
