@@ -1,6 +1,10 @@
 extra-deps: 
 - tls-1.2.17
+- psqueues-0.2.0.2
 resolver: lts-2.15
 flags: {}
 packages:
 - '.'
+- location:
+    git: https://github.com/Feeniks/wreq.git
+    commit: 4e8608cbe1823267e73edae168e93a7a573df16d

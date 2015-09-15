@@ -75,8 +75,8 @@ queueFetch (QC h p t s) name max delete = catchQ $ do
 	rsp <- S.getWith opts s url >>= asJSON
 	return $ rsp ^. (responseBody . msMessages)
 	
-queueDelete :: QueueClient -> String -> String -> IO ()
-queueDelete (QC h p t s) name id = catchQ $ do
-	let url = h ++ "/queues/" ++ name ++ "/messages/" ++ id
-	S.deleteWith (_options t) s url
+queueDelete :: QueueClient -> String -> [String] -> IO ()
+queueDelete (QC h p t s) name ids = catchQ $ do
+	let url = h ++ "/queues/" ++ name ++ "/messages"
+	S.deleteWith (_options t) s url $ Just (encode $ DeleteMessagesRequest ids)
 	return ()

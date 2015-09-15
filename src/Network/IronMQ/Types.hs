@@ -41,6 +41,10 @@ data QueueMessages b = QMs {
 	_msMessages :: [QueueMessage b]
 }
 
+data DeleteMessagesRequest = DeleteMessagesRequest {
+	dmrIDs :: [String]
+}
+
 makeLenses ''QueueInfo
 makeLenses ''PushResponse
 makeLenses ''QueueMessage

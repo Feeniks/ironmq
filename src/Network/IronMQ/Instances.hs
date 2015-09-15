@@ -44,4 +44,7 @@ instance Message b => FromJSON (QueueMessages b) where
 instance Message b => ToJSON (QueueMessages b) where 
 	toJSON qms = object ["messages" .= (qms ^. msMessages)]
 	
+instance ToJSON DeleteMessagesRequest where 
+	toJSON req = object ["ids" .= dmrIDs req]
+	
 instance Exception QueueException
