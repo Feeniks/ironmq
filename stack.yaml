@@ -7,4 +7,4 @@ packages:
 - '.'
 - location:
     git: https://github.com/Feeniks/wreq.git
-    commit: 4e8608cbe1823267e73edae168e93a7a573df16d
+    commit: a87c3686f384a07b08d39b7c8292e4bba69a945e

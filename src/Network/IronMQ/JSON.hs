@@ -8,6 +8,6 @@ import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as B
 
 instance (FromJSON a, ToJSON a) => Message a where 
-	toString = B.unpack . encode
-	fromString = decode . B.pack
+    toString = B.unpack . encode
+    fromString = decode . B.pack
 
