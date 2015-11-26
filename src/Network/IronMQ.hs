@@ -2,7 +2,12 @@
 
 module Network.IronMQ(
     module Network.IronMQ.Types,
-    createClient
+    createClient,
+    queueInfo,
+    clearQueue,
+    enqueue,
+    dequeue,
+    remove
 ) where
 
 import Network.IronMQ.Types
@@ -38,6 +43,9 @@ enqueue qName mx = post ("queues/" ++ qName ++ "/clear") (QMs mx)
 
 dequeue :: (MonadIO m, MonadCatch m, MonadThrow m, MessageBody b) => String -> Int -> IronMQ m [QueueMessage b]
 dequeue qName max = get ("queues/" ++ qName ++ "/messages")
+
+remove :: (MonadIO m, MonadCatch m, MonadThrow m) => String -> [String] -> IronMQ m ()
+remove qName ids = delete ("queues/" ++ qName ++ "/messages") $ DeleteMessagesRequest ids
 
 get :: (MonadIO m, MonadCatch m, MonadThrow m, FromJSON r) => String -> IronMQ m r
 get path = req =<< buildReq "GET" path (Nothing :: Maybe String)
