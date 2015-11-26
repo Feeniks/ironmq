@@ -1,33 +1,29 @@
 {-# LANGUAGE TemplateHaskell, DeriveDataTypeable #-}
 
-module Network.IronMQ.Types where 
+module Network.IronMQ.Types where
 
 import Control.Lens.TH
+import Control.Monad.Reader
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as B
 import Data.Typeable
-import qualified Network.Wreq.Session as S
+import Network.HTTP.Conduit (Manager)
 
-class Message a where 
-    toString :: a -> String 
-    fromString :: String -> Maybe a
+class MessageBody a where
+    serialize :: a -> B.ByteString
+    deserialize :: B.ByteString -> Maybe a
 
 type Host = String
 type ProjectID = String
-type Token = String
+type Token = BS.ByteString
 
-data QueueClient = QC {
-    cHost :: Host,
-    cProjectID :: ProjectID,
-    cToken :: Token,
-    cSession :: S.Session
-} deriving Show
+data IronMQClient = IronMQClient {
+    _cHost :: Host,
+    _cToken :: Token,
+    _cManager :: Manager
+}
 
-data QueueInfo = QueueInfo {
-    _iSize :: Int
-} deriving Show
-
-data PushResponse = PushResponse {
-    _rIDs :: [String]
-} deriving Show
+type IronMQ = ReaderT IronMQClient
 
 data QueueMessage b = QueueMessage {
     _mID :: String,
@@ -37,25 +33,23 @@ data QueueMessage b = QueueMessage {
     _mBody :: b
 } deriving Show
 
-data QueueMessages b = QMs {
-    _msMessages :: [QueueMessage b]
-}
+newtype QueueMessages b = QMs [QueueMessage b]
 
-data DeleteMessagesRequest = DeleteMessagesRequest {
-    dmrIDs :: [String]
-}
+data QueueInfo = QueueInfo Int deriving Show
 
-makeLenses ''QueueInfo
-makeLenses ''PushResponse
-makeLenses ''QueueMessage
-makeLenses ''QueueMessages
+data PushResponse = PushResponse [String] deriving Show
 
-data QueueException = 
-    BadRequest 
-    | Unauthorized 
-    | QuotaExceeded 
-    | NotFound 
-    | ServiceUnavailable 
-    | MessageParseError String 
-    | Misc String 
+data DeleteMessagesRequest = DeleteMessagesRequest [String] deriving Show
+
+data QueueException =
+    BadRequest
+    | Unauthorized
+    | QuotaExceeded
+    | NotFound
+    | ServiceUnavailable
+    | ParseError String
+    | Misc String
     deriving (Show, Typeable)
+
+makeLenses ''IronMQClient
+makeLenses ''QueueMessage
