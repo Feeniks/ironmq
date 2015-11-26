@@ -9,7 +9,7 @@ import Control.Exception (Exception)
 import Control.Lens hiding ((.=))
 import Control.Monad
 import Data.Aeson
-import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.Char8 as B
 import Data.Maybe (fromMaybe)
 
 instance FromJSON QueueInfo where

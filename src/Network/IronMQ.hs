@@ -2,6 +2,7 @@
 
 module Network.IronMQ(
     module Network.IronMQ.Types,
+    runIronMQ,
     createClient,
     queueInfo,
     clearQueue,
@@ -19,12 +20,16 @@ import Control.Monad
 import Control.Monad.Catch
 import Control.Monad.Reader
 import Data.Aeson
+import Data.Char (toLower)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as B
 import Network.HTTP.Client (HttpException(..))
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 import Network.HTTP.Conduit
 import Network.HTTP.Types.Status
+
+runIronMQ :: Monad m => IronMQ m a -> IronMQClient -> m a
+runIronMQ = runReaderT
 
 createClient :: MonadIO m => Host -> ProjectID -> Token -> m IronMQClient
 createClient h p t = liftIO $ liftM (IronMQClient url authTok) (newManager tlsManagerSettings)
@@ -39,10 +44,15 @@ clearQueue :: (MonadIO m, MonadCatch m, MonadThrow m) => String -> IronMQ m ()
 clearQueue qName = post ("queues/" ++ qName ++ "/clear") ("" :: String)
 
 enqueue :: (MonadIO m, MonadCatch m, MonadThrow m, MessageBody b) => String -> [QueueMessage b] -> IronMQ m [String]
-enqueue qName mx = post ("queues/" ++ qName ++ "/clear") (QMs mx)
+enqueue qName mx = post ("queues/" ++ qName ++ "/messages") (QMs mx) >>= return . getIDs
+    where getIDs (PushResponse ids) = ids
 
-dequeue :: (MonadIO m, MonadCatch m, MonadThrow m, MessageBody b) => String -> Int -> IronMQ m [QueueMessage b]
-dequeue qName max = get ("queues/" ++ qName ++ "/messages")
+dequeue :: (MonadIO m, MonadCatch m, MonadThrow m, MessageBody b) => String -> Int -> Bool -> IronMQ m [QueueMessage b]
+dequeue qName max delete = get ("queues/" ++ qName ++ "/messages?n=" ++ maxS ++ "&delete=" ++ delS) >>= return . getMessages
+    where
+    getMessages (QMs mx) = mx
+    maxS = show max
+    delS = fmap toLower $ show delete
 
 remove :: (MonadIO m, MonadCatch m, MonadThrow m) => String -> [String] -> IronMQ m ()
 remove qName ids = delete ("queues/" ++ qName ++ "/messages") $ DeleteMessagesRequest ids
