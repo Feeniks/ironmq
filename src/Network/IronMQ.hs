@@ -2,6 +2,7 @@
 
 module Network.IronMQ(
     module Network.IronMQ.Types,
+    module Data.Default.Class,
     runIronMQ,
     createClient,
     queueInfo,
@@ -23,6 +24,7 @@ import Data.Aeson
 import Data.Char (toLower)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as B
+import Data.Default.Class
 import Network.HTTP.Client (HttpException(..))
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 import Network.HTTP.Conduit

@@ -10,7 +10,22 @@ import Control.Lens hiding ((.=))
 import Control.Monad
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as B
+import Data.Default.Class
 import Data.Maybe (fromMaybe)
+
+instance MessageBody B.ByteString where
+    serialize = id
+    deserialize = Just . id
+
+instance Default b => Default (QueueMessage b) where
+    def =
+        QueueMessage {
+            _mID = "",
+            _mTimeoutSecs = Nothing,
+            _mDelaySecs = Nothing,
+            _mExpirySecs = Nothing,
+            _mBody = def
+        }
 
 instance FromJSON QueueInfo where
     parseJSON (Object v) = QueueInfo <$> v .: "size"
